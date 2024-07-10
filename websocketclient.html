@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<!--mobile friendly-->
+<html lang="en">
+    <head>
+        <title>Rotary Device Emulator</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+         
+        <script>
+		
+		var tname="ws://192.168.0.103:8000";    //for java WebSocketServerSingle
+		
+		window.onload = function(e){ 
+				console.log("page loaded"); 
+				 
+		} 
+
+		var ws=null;
+		function on_connect_clicked() {
+			console.log('connect clicked');
+			
+			var ip=document.getElementById('serverip').value;
+			var port=document.getElementById('port').value;
+			tname='ws://'+ip+':'+port;
+			add_msg('websocket='+tname);
+				ws = new WebSocket(tname);  
+				document.getElementById('connect').disabled=true;
+				
+		 
+				ws.onmessage = function(data){
+					add_msg('msg='+data);
+					var msg=JSON.stringify(data);
+					add_msg('data='+msg);
+				}
+				ws.onopen=function() {
+				
+				document.getElementById('disconnect').disabled=false; 
+					add_msg('_onopen_');
+				}
+				
+				ws.onclose = function (evt) { 
+					add_msg('connection closed');
+					document.getElementById('connect').disabled=false;
+				};
+				
+				ws.onerror= function (evt) { 
+					add_msg('error'); 
+				};
+		}
+		
+		function on_send_clicked(){
+			var msg=document.getElementById('msg').value;
+			var data = JSON.stringify({'data':msg});
+			data=msg;
+			add_msg('sending='+data);
+			if (ws==null) {
+				add_msg('_not_connected_');
+				return;
+			}
+			ws.send(data);
+		}
+		
+		function add_msg(msg) {
+			console.log('add_msg,',msg);
+			var disp=document.getElementById('display');
+			disp.innerHTML+=msg+'<br>';
+		}
+		
+		 
+	
+		</script>
+    </head>
+    <body>
+        <h3>Websocket</h3>
+		
+		 
+                    <label for="connect">WebSocket connection:</label> <br>
+					<label for="serverip">Server IP: </label> <input type="text" id="serverip" class="form-control" value="192.168.0.2"><br>
+					<label for="port">Port: </label><input type="text" id="port" class="form-control" value="8000"> <br>
+                    <button id="connect" class="btn btn-default" type="submit" onclick="on_connect_clicked()">Connect</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
+                    </button>
+					<br><br>
+					<label for="msg">Msg: </label><input type="text" id="msg" class="form-control"> <br>
+                    <button id="send" class="btn btn-default" type="submit" onclick="on_send_clicked()">Send</button>  <br>
+					<div id="display">_data_from_server_<br></div>
+ 
+        
+    </body>
+
+</html>

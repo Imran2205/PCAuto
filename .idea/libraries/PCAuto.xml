@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="PCAuto">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/release_10.zip!/" />
+      <root url="jar://$PROJECT_DIR$/release_8.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

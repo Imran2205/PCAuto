@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="release_10">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto14.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/PCAuto13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

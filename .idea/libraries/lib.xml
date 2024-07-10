@@ -1,0 +1,28 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/release_10/lib/cmutimelex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/javax.websocket-api-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/cmulex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/SimpleRobotInterfaceLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/freetts-jsapi10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/nrjavaserial-3.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/cmu_us_kal.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/jl1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/gson-2.8.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/cgjsapi.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/freetts.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/cmu_time_awb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/en_us.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/SL.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/SimpleNetLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/MyArduinoLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/mbrola.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/cmudict04.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/javax.websocket-api-1.1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_10/lib/jsapi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

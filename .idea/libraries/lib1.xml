@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="lib1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/release_8/lib/SimpleNetLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_8/lib/gson-2.8.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_8/lib/nrjavaserial-3.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_8/lib/javax.websocket-api-1.1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_8/lib/MyArduinoLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/release_8/lib/javax.websocket-api-1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

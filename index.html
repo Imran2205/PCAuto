@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<!--mobile friendly-->
+<html lang="en">
+    <head>
+        <title>Rotary Device Emulator</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/css/main2.css" />
+        
+        <style>
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+</style>
+        
+    </head>
+    <body>
+        <h3>3 Dial Emulator</h3>
+        <p id='unm'>Uname: dev</p>
+<form>
+    <label id="b1">00</label>  <label id="b2">00</label>  <label id="b3">00</label> <br>
+  
+    
+  <input type="button" class="button" id ="cb" value="Click" onclick="msg4()"> 
+  <input type="button" class="button" id ="cb2" value="Back" onclick="msg5()"> <br> <br>
+  
+  <input type="button" class="button" value="B1+" onclick="msg(1)"> 
+  <input type="button" class="button" value="B1-" onclick="msg(-1)">
+  <br>
+    <input type="button" class="button" value="B2+" onclick="msg2(1)">
+  <input type="button" class="button" value="B2-" onclick="msg2(-1)">
+    <br>
+    <input type="button" class="button" value="B3+" onclick="msg3(1)">
+  <input type="button" class="button" value="B3-" onclick="msg3(-1)">
+  
+</form> 
+
+<script>
+
+var username='dev';
+function myFunction() {
+    var txt;
+    var person = prompt("Please enter your name:", "");
+	while(true) {
+		if (person == null || person == "") {
+			person = prompt("Please enter your name:", "");
+		} else {
+			break;
+		}
+	}
+	 username =person;
+	 <!-- connect(); -->
+	 console.log('username='+username);
+	 
+}
+
+<!-- myFunction(); -->
+document.getElementById("unm").innerHTML='Uname: '+username;
+
+    var dt=0, dt2=0, dt3=0, ck=0, ck2=0;
+    function msg(val) { 
+      dt= val; 
+      var element = document.getElementById("b1");
+      element.innerHTML = ""+dt;
+      send(0, 0);
+    }
+    function msg2(val) {
+      dt2= val; 
+      var element = document.getElementById("b2");
+      element.innerHTML = ""+dt2;
+      send(0, 0);
+    }
+    
+     function msg3(val) {
+      dt3= val; 
+      var element = document.getElementById("b3");
+      element.innerHTML = ""+dt3;
+      send(0, 0);
+    }
+      function msg4() {
+          send(1, 0);
+    }
+	  function msg5() {
+          send(0, 1);
+    }
+    
+    function send(ck, ck2) {
+		<!-- enc,2,0,0,1,1 -->
+		var cmd='enc,'+dt+','+dt2+','+dt3+','+ck+','+ck+','+ck2;
+		console.log('cmd='+cmd);
+		
+		var address='/emu/'+cmd;
+		$.get(address, function(data, status){ 
+			 console.log('_success_');
+			 dt=0;
+			 dt2=0;
+			 dt3=0;
+			 ck=0;
+			 ck2=0;
+		});
+		
+    }
+    
+ 
+    
+    
+</script>
+
+        
+    </body>
+
+</html>
