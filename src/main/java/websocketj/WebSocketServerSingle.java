@@ -60,6 +60,7 @@ public class WebSocketServerSingle extends Thread {
             return false;
         }
         try {
+            System.out.println("///////"+msg);
             os.write(encode(msg));
             os.flush();
         } catch (Exception ex) {

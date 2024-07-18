@@ -1,0 +1,14 @@
+C:\Users\FridayLab\source\repos\HelloWord\bin\Debug\HelloWord.dll
+C:\Users\FridayLab\source\repos\HelloWord\bin\Debug\HelloWord.pdb
+C:\Users\FridayLab\source\repos\HelloWord\bin\Debug\HelloWord.dll.manifest
+C:\Users\FridayLab\source\repos\HelloWord\bin\Debug\HelloWord.vsto
+C:\Users\FridayLab\source\repos\HelloWord\bin\Debug\HelloWord.docx
+C:\Users\FridayLab\source\repos\HelloWord\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\FridayLab\source\repos\HelloWord\bin\Debug\Microsoft.Office.Tools.Word.v4.0.Utilities.dll
+C:\Users\FridayLab\source\repos\HelloWord\obj\Debug\HelloWord.csprojAssemblyReference.cache
+C:\Users\FridayLab\source\repos\HelloWord\obj\Debug\HelloWord.Properties.Resources.resources
+C:\Users\FridayLab\source\repos\HelloWord\obj\Debug\HelloWord.csproj.GenerateResource.cache
+C:\Users\FridayLab\source\repos\HelloWord\obj\Debug\HelloWord.csproj.CoreCompileInputs.cache
+C:\Users\FridayLab\source\repos\HelloWord\obj\Debug\HelloWord.csproj.CopyComplete
+C:\Users\FridayLab\source\repos\HelloWord\obj\Debug\HelloWord.dll
+C:\Users\FridayLab\source\repos\HelloWord\obj\Debug\HelloWord.pdb

@@ -447,6 +447,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
         }
 
         if (is_vsto) {
+            System.out.println(">>>>> is_vsto");
             //office works.
 
 //            System.out.println("c3=" + c3);
@@ -474,20 +475,24 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
         }
 
         if (ws != null && ws.isConnected()) {
+            System.out.println(">>>>> ws_connected");
             ws.send_msg(data);
         }
 
         if (c6 == 1) {
+            System.out.println(">>>>> c6==1");
             System.out.println("Simulating escape key");
             robot.keyPress(KeyEvent.VK_ESCAPE);
         }
 
         if (c5 == 0) {
+            System.out.println(">>>>> c5==0");
             shift_hold = false;  //release shift hold
             robot.keyRelease(KeyEvent.VK_SHIFT);
         }
 
         if (wheel_23_arrow_key_bound || native_bind) {
+            System.out.println(">>>>> wheel_23_arrow_key_bound || native_bind");
             if (c1 < 0) {
                 simulate_key(KeyEvent.VK_LEFT);
 

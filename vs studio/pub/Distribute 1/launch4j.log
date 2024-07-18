@@ -1,0 +1,11 @@
+
+
+Version:	3.12
+CmdLine:	E:\dev\Projects\Encoder_device\vs studio\pub\Distribute 1\Wheeler3_Driver_Simulator.exe --l4j-debug
+WOW64:		yes
+Working dir:	E:\dev\Projects\Encoder_device\vs studio\pub\Distribute 1\.
+Java min ver:	
+Java max ver:	
+Bundled JRE:	jre
+Check launcher:	E:\dev\Projects\Encoder_device\vs studio\pub\Distribute 1\jre\bin\javaw.exe (not found)
+Error msg:	This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.

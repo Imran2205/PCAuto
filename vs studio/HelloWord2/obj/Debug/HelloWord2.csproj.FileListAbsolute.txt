@@ -1,0 +1,33 @@
+C:\Users\FridayLab\source\repos\HelloWord2\bin\Debug\HelloWord2.dll
+C:\Users\FridayLab\source\repos\HelloWord2\bin\Debug\HelloWord2.pdb
+C:\Users\FridayLab\source\repos\HelloWord2\bin\Debug\HelloWord2.dll.manifest
+C:\Users\FridayLab\source\repos\HelloWord2\bin\Debug\HelloWord2.vsto
+C:\Users\FridayLab\source\repos\HelloWord2\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.csprojAssemblyReference.cache
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.Properties.Resources.resources
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.csproj.GenerateResource.cache
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.csproj.CoreCompileInputs.cache
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.csproj.CopyComplete
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.dll
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.pdb
+C:\Users\FridayLab\source\repos\HelloWord2\obj\Debug\HelloWord2.Ribbon1.resources
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\HelloWord2.csprojAssemblyReference.cache
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\HelloWord2.Properties.Resources.resources
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\HelloWord2.Ribbon1.resources
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.GenerateResource.cache
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.CoreCompileInputs.cache
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.CopyComplete
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Interop.Accessibility.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Interop.COMAdmin.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Interop.COMSVCSLib.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Interop.UIA.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Interop.UIAutomationBlockingCoreLib.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Interop.UIAutomationClient.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.ResolveComReference.cache
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\bin\Debug\Wheeler 3D.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\bin\Debug\Wheeler 3D.pdb
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\bin\Debug\Wheeler 3D.dll.manifest
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\bin\Debug\Wheeler 3D.vsto
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Wheeler 3D.dll
+E:\dev\Projects\Encoder_device\vs studio\HelloWord2\obj\Debug\Wheeler 3D.pdb

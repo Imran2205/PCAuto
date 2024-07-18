@@ -103,19 +103,19 @@ void loop() {
       }else if(h=='r') {
         on_release(code);
       }
-      // else if(h=='x') {
-      //   Mouse.move(code, 0, 0);
-      // }else if(h=='y') {
-      //   Mouse.move(0, code, 0);
-      // }else if(h=='l') {
-      //   Mouse.press(MOUSE_LEFT);
-      //   delay(20);
-      //   Mouse.release(MOUSE_LEFT);
-      // }else if(h=='r') {
-      //   Mouse.press(MOUSE_RIGHT);
-      //   delay(20);
-      //   Mouse.release(MOUSE_RIGHT);
-      // }
+      else if(h=='x') {
+        Mouse.move(code, 0, 0);
+      }else if(h=='y') {
+        Mouse.move(0, code, 0);
+      }else if(h=='l') {
+        Mouse.press(MOUSE_LEFT);
+        delay(20);
+        Mouse.release(MOUSE_LEFT);
+      }else if(h=='r') {
+        Mouse.press(MOUSE_RIGHT);
+        delay(20);
+        Mouse.release(MOUSE_RIGHT);
+      }
    }
   
   boolean anychange=false;
@@ -174,39 +174,39 @@ void loop() {
      anychange=true;
    }
    if(anychange) {
-    // Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2) );
-    if(mouse_mode==1){
-      Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2) );
-    }
-    else{
-      Serial.println();
-      if(encoderPosCount!=0) {
-        Mouse.move(encoderPosCount*mouse_speed, 0, 0);
-      }
-      if(encoderPosCount2!=0) {
-        Mouse.move(0, encoderPosCount2*mouse_speed, 0);
-      }
-      if(encoderPosCount3!=0) {
-        mouse_speed = mouse_speed + encoderPosCount3;
-        if(mouse_speed<1){
-          mouse_speed = 1;
-        }
-        if(mouse_speed>200){
-          mouse_speed = 200;
-        }
-        EEPROM.write(EEPROM_location_address_mouse_speed,mouse_speed);
-      }
-      if(bVal==1) {
-        Mouse.press(MOUSE_LEFT);
-        delay(20);
-        Mouse.release(MOUSE_LEFT);
-      }
-      if(bVal2==1) {
-        Mouse.press(MOUSE_RIGHT);
-        delay(20);
-        Mouse.release(MOUSE_RIGHT);
-      }
-    }  
+    Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2) );
+    // if(mouse_mode==1){
+      // Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2) );
+    // }
+    // else{
+    //   Serial.println();
+    //   if(encoderPosCount!=0) {
+    //     Mouse.move(encoderPosCount*mouse_speed, 0, 0);
+    //   }
+    //   if(encoderPosCount2!=0) {
+    //     Mouse.move(0, encoderPosCount2*mouse_speed, 0);
+    //   }
+    //   if(encoderPosCount3!=0) {
+    //     mouse_speed = mouse_speed + encoderPosCount3;
+    //     if(mouse_speed<1){
+    //       mouse_speed = 1;
+    //     }
+    //     if(mouse_speed>200){
+    //       mouse_speed = 200;
+    //     }
+    //     EEPROM.write(EEPROM_location_address_mouse_speed,mouse_speed);
+    //   }
+    //   if(bVal==1) {
+    //     Mouse.press(MOUSE_LEFT);
+    //     delay(20);
+    //     Mouse.release(MOUSE_LEFT);
+    //   }
+    //   if(bVal2==1) {
+    //     Mouse.press(MOUSE_RIGHT);
+    //     delay(20);
+    //     Mouse.release(MOUSE_RIGHT);
+    //   }
+    // }  
    }
    pinALast = aVal;
    pinALast2 = aVal2;
