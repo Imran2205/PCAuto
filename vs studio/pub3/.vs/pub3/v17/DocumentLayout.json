@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ibk5106\\Desktop\\Wheeler\\PCAuto\\vs studio\\pub3\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ibk5106\\Desktop\\Wheeler\\PCAuto\\vs studio\\pub3\\Wheeler 3D.vsto||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Wheeler 3D.vsto||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Wheeler 3D.vsto",
+              "DocumentMoniker": "C:\\Users\\ibk5106\\Desktop\\Wheeler\\PCAuto\\vs studio\\pub3\\Wheeler 3D.vsto",
+              "RelativeDocumentMoniker": "Wheeler 3D.vsto",
+              "ToolTip": "C:\\Users\\ibk5106\\Desktop\\Wheeler\\PCAuto\\vs studio\\pub3\\Wheeler 3D.vsto",
+              "RelativeToolTip": "Wheeler 3D.vsto",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAK5SURBVDhPdZJbSFRRFIb/uahYU3lpNDENFbIeIqxMwSiiCJLqwaKIxAx9iFAwqgfDjEq7UIRhIEhPaqCFppFZOOk09VRCSnkJL4Vj2uBlGhxn5sy5rPY\u002BHi8T9sHae5\u002B91vr3Xmsf3UvbAGEFJEmCKIoQ/X7\u002B\u002BSD7aNoV1bEcIgIX\u002BB8KsyfPrZR6OI\u002Bu3q\u002Bp19IC0MuyrC0DYdqQZYIgCCgvuYj2jvenmEiD5l5Ez6/6L4qWzE1RFJSUV0Cn08HSaTuphSxilFidnLisG\u002BrMGXlWCpmpSEwgO\u002BugtgvU1jdqqyUCbmBvuq7OEkuue/EBtU1W9H6349ihfeo\u002Ba4k6L0cvSuKiY\u002BEWokjIyszA8cy9SIiPhcFgwMYNkVgfsU71B1Dd0EEiO9InyOT2yvTHLdG0SyShtoiErM0k7QDNPiygOa9Aja2ddP4VJey6O71KS58vQWS1qiZxU\u002BDnc9MbjFX2YKjZg9C6xwgJNqJLToOlyfG5f2R12/bLvXGqAH9G3u2tZ8qwLacMKeduw89K0Hlm54WYoLOwEp5fdsyMz2DIZcowTw0l9vzYkqoK8IEHchaaKLCkwcR0ROUmYaYkF4an9\u002BCa9aBvPBapkc68CHOEjLDRMR5r5AM/hbPURAW6SzVwTtoQqwNc\u002BnwERUbjwM5WtMToLSzEgt2Zn9Tgypo2GnUINDzuo4FRL30dmaMvg24an2ghoTOGhHebiCwmcji7KLk/ioqHg3Myfoc68lpQzPO1EhS8tnSi3WqF9aMNjokhhH8rADJGIaX3wp1QxcNQaC/BnSR/TfykeU/3VFgR31NLOJ3PgjX07Jc9cWQ/UqIJIV4fq30OUQO38FYoRHXyI1T0mZMV3xpzv8etPiWrcGWo3Xhz\u002BKeUI/uhRJlQF34WpSlVQRcMa03XyKUP9nX78nqr55r/AvLzjkqHnMIOAAAAAElFTkSuQmCC",
+              "WhenOpened": "2024-07-18T23:02:48.477Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

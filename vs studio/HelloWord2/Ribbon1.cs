@@ -27,8 +27,8 @@ namespace HelloWord2
 
         private void Access_Ribbons_By_Explorer()
         {
-           // ThisRibbonCollection ribbonCollection =  Globals.Ribbons[Globals.ThisAddIn.Application.ActiveExplorer()];
-            //ribbonCollection.Ribbon1.comboBox1.Text = "Hello World2";
+           //ThisRibbonCollection ribbonCollection =  Globals.Ribbons[Globals.ThisAddIn.Application.ActiveExplorer()];
+           //ribbonCollection.Ribbon1.comboBox1.Text = "Hello World2";
         }
 
         private void button1_Click(object sender, RibbonControlEventArgs e)
