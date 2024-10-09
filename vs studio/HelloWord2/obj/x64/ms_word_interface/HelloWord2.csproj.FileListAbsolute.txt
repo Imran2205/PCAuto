@@ -1,0 +1,18 @@
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\x64\ms_word_interface\Wheeler 3D.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\x64\ms_word_interface\Wheeler 3D.dll.manifest
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\x64\ms_word_interface\Wheeler 3D.vsto
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\x64\ms_word_interface\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\HelloWord2.csproj.AssemblyReference.cache
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\Interop.Accessibility.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\Interop.COMAdmin.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\Interop.COMSVCSLib.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\Interop.UIA.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\Interop.UIAutomationBlockingCoreLib.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\Interop.UIAutomationClient.dll
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\HelloWord2.csproj.ResolveComReference.cache
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\HelloWord2.Properties.Resources.resources
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\HelloWord2.Ribbon1.resources
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\HelloWord2.csproj.GenerateResource.cache
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\HelloWord2.csproj.CoreCompileInputs.cache
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\HelloWord2.csproj.Up2Date
+C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\x64\ms_word_interface\Wheeler 3D.dll
