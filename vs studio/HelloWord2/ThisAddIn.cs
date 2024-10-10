@@ -224,7 +224,7 @@ namespace HelloWord2
         public void read_socket()
         {
 
-            while (is_live)
+            while (true)
             {
                 System.Threading.Thread.Sleep(10);
 
@@ -235,13 +235,14 @@ namespace HelloWord2
                     // Receive the response from the remote device.    
                     int bytesRec = Client.Receive(bytes);
                     String data = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                    on_msg(data); 
+                    on_msg(data);
 
+                    is_live = true;
                 }
                 catch (Exception ex)
                 {
                     is_live = false;
-                    break;
+                    //break;
                 }
 
             }
@@ -571,136 +572,161 @@ namespace HelloWord2
             }
             else if (msg.Trim().Equals("next2"))      //Second Wheel 
             {
-
-                group_i++;
-                if (group_i >= groups.Count)
+                if (groups == null)
                 {
-                    send_line("__NO_NEXT_G__");
-                    group_i = group_i - 1;
+                    return;
                 }
-
-                groupmemory[tabs_i] = group_i;
-
-                //
-                synthesizer.SpeakAsyncCancelAll();
-
-                AutomationElement item = groups[group_i];
-                send_line("group=" + item.Current.Name);
-
-                //release_border();
-                //draw_border(item);
-                refresh_rectanble(item);
-
-                groupelements = WalkEnabledElements(item);
-                try
+                if (groups.Count > 0)
                 {
-                    item.SetFocus();
-                    //groupelements[0].SetFocus(); 
+                    group_i++;
+                    if (group_i >= groups.Count)
+                    {
+                        send_line("__NO_NEXT_G__");
+                        group_i = group_i - 1;
+                    }
+
+                    groupmemory[tabs_i] = group_i;
+
+                    //
+                    synthesizer.SpeakAsyncCancelAll();
+
+                    AutomationElement item = groups[group_i];
+                    send_line("group=" + item.Current.Name);
+
+                    //release_border();
+                    //draw_border(item);
+                    //refresh_rectanble(item);
+                    refocus(item);
+
+                    groupelements = WalkEnabledElements(item);
+                    try
+                    {
+                        item.SetFocus();
+                        //groupelements[0].SetFocus(); 
+                    }
+                    catch (Exception ex)
+                    {
+                        send_line("error=" + ex.Message);
+                    }
+                    synthesizer.SpeakAsync("group " + item.Current.Name);
                 }
-                catch (Exception ex)
-                {
-                    send_line("error=" + ex.Message);
-                }
-                synthesizer.SpeakAsync("group " + item.Current.Name);
             }
             else if (msg.Trim().Equals("prev2"))                    //Second Wheel 
             {
-
-                group_i--;
-                if (group_i < 0)
+                if (groups == null)
                 {
-                    send_line("__NO_PREV_G__");
-                    group_i = 0;
+                    return;
                 }
-
-                synthesizer.SpeakAsyncCancelAll();
-                groupmemory[tabs_i] = group_i;
-
-                AutomationElement item = groups[group_i];
-                send_line("group " + item.Current.Name);
-
-                //release_border();
-                // draw_border(item); 
-                refresh_rectanble(item);
-
-
-                groupelements = WalkEnabledElements(item);
-                try
+                if (groups.Count > 0)
                 {
-                    item.SetFocus();
-                    // groupelements[0].SetFocus(); 
-                }
-                catch (Exception ex)
-                {
-                    send_line("error=" + ex.Message);
-                }
+                    group_i--;
+                    if (group_i < 0)
+                    {
+                        send_line("__NO_PREV_G__");
+                        group_i = 0;
+                    }
 
-                synthesizer.SpeakAsync("group " + item.Current.Name);
+                    synthesizer.SpeakAsyncCancelAll();
+                    groupmemory[tabs_i] = group_i;
+
+                    AutomationElement item = groups[group_i];
+                    send_line("group " + item.Current.Name);
+
+                    //release_border();
+                    // draw_border(item); 
+                    //refresh_rectanble(item);
+                    refocus(item);
+
+
+                    groupelements = WalkEnabledElements(item);
+                    try
+                    {
+                        item.SetFocus();
+                        // groupelements[0].SetFocus(); 
+                    }
+                    catch (Exception ex)
+                    {
+                        send_line("error=" + ex.Message);
+                    }
+
+                    synthesizer.SpeakAsync("group " + item.Current.Name);
+                }
 
             }
             else if (msg.Trim().Equals("next1"))            //First Wheel
             {
-
-                element_i++;
-                if (element_i >= groupelements.Count)
+                if (groupelements == null)
                 {
-                    send_line("__NO_NEXT_E__");
-                    element_i = element_i - 1;
+                    return;
                 }
-
-                //
-                elementTracker[tabs_i + "_" + group_i] = element_i;  //storing ribbon_group to element.
-
-                synthesizer.SpeakAsyncCancelAll();
-                AutomationElement item = groups[group_i];
-
-                AutomationElement element = groupelements[element_i];
-                send_line("group element=" + element.Current.Name);
-
-
-                try
+                if (groupelements.Count > 0)
                 {
-                    element.SetFocus();
+                    element_i++;
+                    if (element_i >= groupelements.Count)
+                    {
+                        send_line("__NO_NEXT_E__");
+                        element_i = element_i - 1;
+                    }
+
+                    //
+                    elementTracker[tabs_i + "_" + group_i] = element_i;  //storing ribbon_group to element.
+
+                    synthesizer.SpeakAsyncCancelAll();
+                    AutomationElement item = groups[group_i];
+
+                    AutomationElement element = groupelements[element_i];
+                    send_line("group element=" + element.Current.Name);
+
+
+                    try
+                    {
+                        element.SetFocus();
+                    }
+                    catch (Exception ex)
+                    {
+                        // synthesizer.Speak(element.Current.Name);
+                    }
+                    String type = getElementType(element);
+                    synthesizer.SpeakAsync(element.Current.Name + type);
                 }
-                catch (Exception ex)
-                {
-                    // synthesizer.Speak(element.Current.Name);
-                }
-                String type = getElementType(element);
-                synthesizer.SpeakAsync(element.Current.Name + type);
             }
             else if (msg.Trim().Equals("prev1"))            //First Wheel
             {
-
-                element_i--;
-                if (element_i < 0)
+                if (groupelements == null)
                 {
-                    send_line("__NO_PREV_E__");
-                    element_i = 0;
+                    return;
                 }
-                synthesizer.SpeakAsyncCancelAll();
-
-                elementTracker[tabs_i + "_" + group_i] = element_i;
-
-                AutomationElement item = groups[group_i];
-
-                AutomationElement element = groupelements[element_i];
-                send_line("group element=" + element.Current.Name);
-
-                try
+                if (groupelements.Count > 0)
                 {
-                    element.SetFocus();
+
+                    element_i--;
+                    if (element_i < 0)
+                    {
+                        send_line("__NO_PREV_E__");
+                        element_i = 0;
+                    }
+                    synthesizer.SpeakAsyncCancelAll();
+
+                    elementTracker[tabs_i + "_" + group_i] = element_i;
+
+                    AutomationElement item = groups[group_i];
+
+                    AutomationElement element = groupelements[element_i];
+                    send_line("group element=" + element.Current.Name);
+
+                    try
+                    {
+                        element.SetFocus();
+                    }
+                    catch (Exception ex)
+                    {
+                        //synthesizer.Speak(element.Current.Name);
+                    }
+
+                    String type = getElementType(element);
+                    synthesizer.SpeakAsync(element.Current.Name + type);
+
                 }
-                catch (Exception ex)
-                {
-                    //synthesizer.Speak(element.Current.Name);
-                }
-
-                String type = getElementType(element);
-                synthesizer.SpeakAsync(element.Current.Name +type);
-
-                 
-
 
             }
             else if (msg.Trim().Equals("click"))            //forward click button

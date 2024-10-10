@@ -1,51 +1,43 @@
-package pcauto;
+package wheelerdriver;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.Vector;
-import java.util.prefs.Preferences;
-import myarduinolib.ArduinoCmdClient;
-import myarduinolib.SerialNR;
+import arduino2bridge.bridgekeyboard;
+import com.fazecast.jSerialComm.SerialPort;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
-import simplenet.nsojib.github.io.*;
+import wheelerdriver.WheelerDriver;
+import simplenet.nsojib.github.io.SimpleNetServer;
+import simplenet.nsojib.github.io.SimpleNetServerListener;
 import simplerobotinterfacelib.TTSListener;
-//import sonification.DingDong;
 import sonification.Toner;
 import ttsgui.TTS;
 import webserversingle.EmuInterface;
 import webserversingle.EmuServer;
 import websocketj.WebSocketServerSingle;
 import websocketj.WebsocketInterface;
-import com.fazecast.jSerialComm.SerialPort;
-import java.util.Scanner;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.prefs.Preferences;
+import wheelerdriver.CtrlKeyChecker;
 
-/**
- *
- * @author FridayLab
- */
-public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServerListener, TTSListener {
+public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNetServerListener, TTSListener {
 
     GUI g;
     Robot robot;
-//    static final String TAG = ArduinoCmdClient.class.getSimpleName();
+    //    static final String TAG = ArduinoCmdClient.class.getSimpleName();
 //    private String port = "COM18";
 //    private int baud = 230400;
+    private static boolean ctrlPressed = false;
     private int baud = 9600;
     private SerialPort ms_d;
     private SerialPort hw_mouse_d;
@@ -53,6 +45,14 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     private OutputStream ms_o;
     private InputStream hw_mouse_i;
     private OutputStream hw_mouse_o;
+
+    private SerialPort wheel3d, keyboard;
+    private InputStream wheel3d_i, keyboard_i;
+    private OutputStream wheel3d_o, keyboard_o;
+
+    private long prev_time = System.currentTimeMillis();
+    private long curr_time = System.currentTimeMillis();
+
     private boolean isReady = false;
     int wh = 0, wh2 = 0, wh3 = 0;
 
@@ -72,6 +72,11 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     public boolean useAsMouse = false;
     public int mouse_speed = 3;
 
+    boolean in_ribbon = false;
+    boolean in_ribbon_nav = false;
+    boolean on_hold = false;
+    boolean is_selected = false;
+
     //hw mouse.
 
 
@@ -87,7 +92,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     /*
     work as a websocket server for the Wheel3D device.
      */
-    public PCAuto() {
+    public WheelerDriver() {
         prefs = Preferences.userRoot().node(this.getClass().getName());
         toner = new Toner();
 
@@ -163,6 +168,8 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
         tts.speakText("Ready");
     }
 
+
+
     public void speak_tts(String txt, int pitch) {
         tts.voice.setPitch(pitch);
         tts.speakText(txt);
@@ -188,7 +195,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             int yp = (int) ((100.0f * mouse.y) / screen.height);
 
 //            DingDong sonyfication = new DingDong();
-//            sonyfication.play_ding(1 + xp / 10); 
+//            sonyfication.play_ding(1 + xp / 10);
 //            sonyfication.play_dong(1 + yp / 10);
 //            sonyfication.close();
             if (g.enableDingDong()) {
@@ -230,7 +237,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
 
 //        Toner.isplaying = false;
         try {
-            //Toner.tone(freq, 500); 
+            //Toner.tone(freq, 500);
             double volume = g.config.get("tonevolume") / 100.00;
             int toneduration = g.config.get("toneduration");
             //Toner.tone(freq, toneduration, volume);
@@ -254,7 +261,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
 
 //        Toner.isplaying = false;
         try {
-            //Toner.tone(freq, 500); 
+            //Toner.tone(freq, 500);
             double volume = g.config.get("tonevolume") / 100.00;
             int toneduration = g.config.get("dingdongduration");
             Toner.tone(freq, toneduration, volume);
@@ -269,13 +276,16 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             GlobalScreen.registerNativeHook();
             GlobalScreen.addNativeKeyListener(new NativeKeyListener() {
 
-                @Override
-                public void nativeKeyTyped(NativeKeyEvent nativeEvent) {
 
+                @Override
+                public void nativeKeyReleased(NativeKeyEvent e) {
+                    if (e.getKeyCode() == 29) {
+                        ctrlPressed = false;
+                    }
                 }
 
                 @Override
-                public void nativeKeyReleased(NativeKeyEvent nativeEvent) {
+                public void nativeKeyTyped(NativeKeyEvent nativeEvent) {
 
                 }
 
@@ -286,6 +296,10 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
 //User typed: Back Quote
 //kc=29
 //User typed: Ctrl
+                    if (nativeEvent.getKeyCode() == 29) {
+                        ctrlPressed = true;
+                    }
+
                     int kc = nativeEvent.getKeyCode();
                     System.out.println("kc=" + kc);
                     String keyText = NativeKeyEvent.getKeyText(kc);
@@ -327,6 +341,15 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             hw_mouse_d = ms_d;
             hw_mouse_o = ms_o;
             hw_mouse_i = ms_i;
+
+            keyboard = ms_d;
+            keyboard_i = hw_mouse_i;
+            keyboard_o = hw_mouse_o;
+
+            wheel3d = keyboard;
+            wheel3d_i = keyboard_i;
+            wheel3d_o = keyboard_o;
+
             System.out.println("Connected");
             g.setTitle(g.getTitle() + "_Connected");
         } catch (Exception ex) {
@@ -362,7 +385,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             System.out.println("Can't connect");
 //            ex.printStackTrace();
         }
-        new read_arduino().start();
+        new WheelerDriver.read_arduino().start();
     }
 
     class read_arduino extends Thread {
@@ -389,14 +412,15 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
                 } while (read_b_ASCII != 10);
                 System.out.println("found=" + line);
                 String[] info = line.trim().split(",");
-                int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
-                if (info.length == 7) {
+                int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0;
+                if (info.length == 8) {
                     c1 = Integer.parseInt(info[1]);
                     c2 = Integer.parseInt(info[2]);
                     c3 = Integer.parseInt(info[3]);
                     c4 = Integer.parseInt(info[4]);
                     c5 = Integer.parseInt(info[5]);
                     c6 = Integer.parseInt(info[6]);
+                    c7 = Integer.parseInt(info[7]);
 
                     if (c1 != 0) {
                         c1_b = !c1_b;
@@ -425,21 +449,200 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
                         wh3 += c3;
                         c3t = 0;
                     }
-                    String recreate = "enc," + wh + "," + wh2 + "," + wh3 + "," + c4 + "," + c5 + "," + c6;
+                    String recreate = "enc," + wh + "," + wh2 + "," + wh3 + "," + c4 + "," + c5 + "," + c6 + "," + c7;
 //                    line = recreate;
                     System.out.println("found_recreated=" + line);
 
                 }
                 //older version
-                on_device_event(line, c1, c2, c3, c4, c5, c6);
+
+                curr_time = System.currentTimeMillis();
+                long t_diff = curr_time - prev_time;
+//                    System.out.println(t_diff);
+                if(t_diff > 50){
+                    on_device_event(line, c1, c2, c3, c4, c5, c6, c7);
+                }
+                prev_time = curr_time;
+
+//                on_device_event(line, c1, c2, c3, c4, c5, c6);
             }
         }
 
     }
 
-    public void on_device_event(String data, int c1, int c2, int c3, int c4, int c5, int c6) {
+    private void send_ser_data(OutputStream o_s, String msg){
+        byte[] send_bytes = new byte[0];
+        System.out.println(msg);
+        try {
+            send_bytes = msg.getBytes("US-ASCII");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            o_s.write(send_bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void on_wheels(int c1, int c2, int c3, int c5, int c6) {
+
+        System.out.println("status: rib: "+in_ribbon+" nav: "+in_ribbon_nav+" hold: "+on_hold+" sel: "+is_selected);
+        if (c6 == 1) {
+            //esc
+//            keyboard.send_new("p,177\n");   //esc
+            send_ser_data(keyboard_o, "p,177\n");
+            in_ribbon = false;
+            in_ribbon_nav = false;
+            return;
+        } else if (c5 == 1) {
+            if (in_ribbon) {
+//                keyboard.send_new("p,176\n");   //ENTER
+                send_ser_data(keyboard_o, "p,176\n");
+                if (is_selected) {  //just previous_on_editor was selected.
+                    delay(10);
+                    this.on_wheels(0, 0, 0, 0, 1);
+                    delay(10);
+//                    keyboard.send_new("p,215\n");   //left . unselect.
+                    send_ser_data(keyboard_o, "p,215\n");
+                }
+            } else {
+//                keyboard.send_new("h,176\n");   //ENTER
+//                 keyboard.send_new("h,129\n");   //LEFT SHIFT
+                send_ser_data(keyboard_o, "h,129\n");
+            }
+        }
+
+        if(c5==0 && on_hold) {
+//             keyboard.send_new("r,129\n");   //LEFT SHIFT
+            send_ser_data(keyboard_o, "r,129\n");
+        }
+
+
+        if (c5 == 1) {
+            on_hold = true;
+        } else {
+            on_hold = false;
+        }
+
+        if (c1 != 0) {
+            on_wheel_1(c1);
+        } else if (c2 != 0) {
+            on_wheel_2(c2);
+        } else if (c3 != 0) {
+            on_wheel_3(c3);
+        }
+
+        if(c1==0 && c2==0&& c3==0&& c5==0&& c6==0) {    //all is zero
+            return;
+        }
+        if (!in_ribbon && c3==0) {
+            if ((c1 != 0 || c2 != 0) && on_hold) {
+                is_selected = true;
+            } else {
+                is_selected = false;
+            }
+        }
+
+    }
+
+    public void on_wheel_1(int val) {
+        if (in_ribbon) {
+            if (val == 1) {
+//                keyboard.send_new("p,179\n");   //TAB
+                send_ser_data(keyboard_o, "p,179\n");
+
+            } else {
+//                keyboard.send_new("h,129\n");   //LEFT SHIFT
+//                keyboard.send_new("p,179\n");   //TAB
+//                keyboard.send_new("r,129\n");   //LEFT SHIFT
+
+                send_ser_data(keyboard_o, "h,129\n");
+                send_ser_data(keyboard_o, "p,179\n");
+                send_ser_data(keyboard_o, "r,129\n");
+
+            }
+
+            in_ribbon_nav = true;
+            return;
+        }
+//        else if (on_hold) {
+//            keyboard.send_new("h,129\n");   //LEFT SHIFT hold
+//            if (val == 1) {
+//                keyboard.send_new("p,215\n");   //left
+//            } else if (val == -1) {
+//                keyboard.send_new("p,216\n");   //right
+//            }
+//            keyboard.send_new("r,129\n");   //LEFT SHIFT release
+//        }
+        else {
+
+            if (val == 1) {
+//                keyboard.send_new("p,215\n");   //left
+                send_ser_data(keyboard_o, "p,215\n");
+            } else if (val == -1) {
+//                keyboard.send_new("p,216\n");   //right
+                send_ser_data(keyboard_o, "p,216\n");
+            }
+        }
+    }
+
+    public void on_wheel_2(int val) {
+        System.out.println("on_wheel2=" + val);
+
+        if (val == 1) {
+//            keyboard.send_new("p,217\n");   //up
+            send_ser_data(keyboard_o, "p,217\n");
+        } else if (val == -1) {
+//            keyboard.send_new("p,218\n");   //down
+            send_ser_data(keyboard_o, "p,218\n");
+        }
+    }
+
+    public void on_wheel_3(int val) {
+        System.out.println("on_ribbon_wheel");
+        if (!in_ribbon) {
+            in_ribbon = true;
+//            keyboard.send_new("p,130\n");     //left alt
+//            keyboard.send_new("p,203\n");     //F10
+            send_ser_data(keyboard_o, "p,203\n");
+        }
+        if (in_ribbon_nav) { //
+//            keyboard.send_new("p,203\n");     //F10
+            send_ser_data(keyboard_o, "p,203\n");
+            delay(10);
+//            keyboard.send_new("p,203\n");     //F10
+            send_ser_data(keyboard_o, "p,203\n");
+            in_ribbon_nav = false;
+        }
+
+        if (val > 0) {
+
+//            keyboard.send_new("p,215\n");   //left
+            send_ser_data(keyboard_o, "p,215\n");
+
+        } else {
+//            keyboard.send_new("p,216\n");   //right
+            send_ser_data(keyboard_o, "p,216\n");
+        }
+    }
+
+    public void on_device_event(String data, int c1, int c2, int c3, int c4, int c5, int c6, int c7) {
         System.out.println("on_device_event=" + data);
         g.add_txt(data);
+
+//        if (ctrlPressed) {
+//            System.out.println("Ctrl is currently pressed");
+//        }
+
+        if (c7 == 1) {
+            System.out.println("Change mode");
+            if (ctrlPressed) {
+                System.out.println("Ctrl is currently pressed");
+                useAsMouse = !useAsMouse;
+            }
+            return;
+        }
 
         if (useAsMouse) {
             this.parse_device_for_mouse(c2, c1, c3, c4, c5, c6);
@@ -599,7 +802,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
 //            isReady = true;
 //            System.out.println("IS Ready");
 //            System.out.println("isready");
-            return;
+        return;
 //        }
 //        }
     }
@@ -655,7 +858,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             server.send("back\n");
         }
 
-//        } 
+//        }
 //        if (name.equals("up")) {
 //            robot.keyPress(KeyEvent.VK_UP);
 //        } else if (name.equals("down")) {
@@ -945,7 +1148,8 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     }
 
     public static void main(String[] args) {
-        new PCAuto();
+//        CtrlKeyChecker.initialize();
+        new WheelerDriver();
     }
 
     @Override
@@ -999,12 +1203,12 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             robot.mouseMove(x, y);
             System.out.println("move request on=" + x + " " + y);
             g.add_txt("move request on=" + x + " " + y);
-//                
+//
 //           robot.keyPress(KeyEvent.CTRL_DOWN_MASK);
 //           robot.keyPress(KeyEvent.VK_C);
 //           robot.keyRelease(KeyEvent.CTRL_DOWN_MASK);
-//           
-//                
+//
+//
 
         } else if (msg.contains("unhold")) {
             robot.mouseRelease(MouseEvent.BUTTON1_DOWN_MASK);
@@ -1042,14 +1246,15 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
         System.out.println("emu_found=" + line);
 
         String[] info = line.trim().split(",");
-        int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
-        if (info.length == 7) {
+        int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0;
+        if (info.length == 8) {
             c1 = Integer.parseInt(info[1]);
             c2 = Integer.parseInt(info[2]);
             c3 = Integer.parseInt(info[3]);
             c4 = Integer.parseInt(info[4]);
             c5 = Integer.parseInt(info[5]);
             c6 = Integer.parseInt(info[6]);
+            c7 = Integer.parseInt(info[7]);
 
             c1t += c1;
             c2t += c2;
@@ -1071,7 +1276,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
 //            line = recreate;
             System.out.println("found_recreated=" + line);
         }
-        on_device_event(line, c1, c2, c3, c4, c5, c6);
+        on_device_event(line, c1, c2, c3, c4, c5, c6, c7);
     }
 
     boolean has_client = false;

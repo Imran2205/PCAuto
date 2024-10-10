@@ -27,8 +27,8 @@
 
 int mouse_speed = 3;
 int encoderPosCount = 0, encoderPosCount2 = 0, encoderPosCount3 = 0; 
-int pinALast, pinALast2, pinALast3, btnLast, btn2Last;  
-int aVal, aVal2, aVal3, bVal, bVal2;
+int pinALast, pinALast2, pinALast3, btnLast, btn2Last, mVal_last;  
+int aVal, aVal2, aVal3, bVal, bVal2, mVal;
 int mouse_mode=0;
 int mode_val;
 
@@ -126,6 +126,13 @@ void loop() {
    bVal = digitalRead(btn);
    bVal2 = digitalRead(btn2); 
    mode_val = digitalRead(mouse_mode_pin); 
+   mVal = 0;
+   if (bVal == 1 && bVal2 == 1){
+    mVal = 1;
+   }
+   else{
+    mVal =0;
+   }
 
    if(mode_val==1){
     if(mode_val!=mouse_mode){
@@ -153,6 +160,9 @@ void loop() {
    if(bVal2!=btn2Last) { 
       anychange=true;
    }
+   if(mVal!=mVal_last) { 
+      anychange=true;
+   }
    
    
    if (aVal != pinALast){ 
@@ -174,7 +184,7 @@ void loop() {
      anychange=true;
    }
    if(anychange) {
-    Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2) );
+    Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2)+","+String(mVal) );
     // if(mouse_mode==1){
       // Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2) );
     // }
@@ -213,7 +223,12 @@ void loop() {
    pinALast3 = aVal3;
    btnLast=bVal;
    btn2Last=bVal2; 
+   mVal_last = mVal;
    delay(2);
+
+  //  if(bVal==1 && bVal2==1){
+  //   delay(100);
+  //  }
 }
 
 void on_hold(int keycode) {

@@ -51,3 +51,23 @@ C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord
 C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.Up2Date
 C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Wheeler 3D.dll
 C:\Users\ibk5106\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Wheeler 3D.pdb
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\Debug\Wheeler 3D.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\Debug\Wheeler 3D.pdb
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\Debug\Wheeler 3D.dll.manifest
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\Debug\Wheeler 3D.vsto
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.AssemblyReference.cache
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Interop.Accessibility.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Interop.COMAdmin.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Interop.COMSVCSLib.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Interop.UIA.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Interop.UIAutomationBlockingCoreLib.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Interop.UIAutomationClient.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.ResolveComReference.cache
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.Properties.Resources.resources
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.Ribbon1.resources
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.GenerateResource.cache
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.CoreCompileInputs.cache
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.Up2Date
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Wheeler 3D.dll
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Wheeler 3D.pdb
