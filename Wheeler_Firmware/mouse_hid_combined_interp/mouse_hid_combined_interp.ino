@@ -28,9 +28,12 @@
 int mouse_speed = 3;
 int encoderPosCount = 0, encoderPosCount2 = 0, encoderPosCount3 = 0; 
 int pinALast, pinALast2, pinALast3, btnLast, btn2Last, mVal_last;  
-int aVal, aVal2, aVal3, bVal, bVal2, mVal;
+int aVal, aVal2, aVal3, bVal, bVal2, mVal, eVal1, eVal2;
 int mouse_mode=0;
 int mode_val;
+
+long btn_1_timer = 0;
+long btn_2_timer = 0;
 
 void init_pins(int pa, int pb) {
   pinMode (pa,INPUT);
@@ -45,6 +48,11 @@ void setup() {
   init_pins(pinA3, pinB3);
   pinMode(btn, INPUT);
   pinMode(btn2, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(btn), start_time_btn_1, RISING);
+
+  attachInterrupt(digitalPinToInterrupt(btn2), start_time_btn_2, RISING);
+
   pinMode(mouse_mode_pin, INPUT_PULLUP); 
 
   pinMode(pin_h, OUTPUT);
@@ -74,6 +82,32 @@ void setup() {
 
   Mouse.begin();
 }
+
+void start_time_btn_1(){
+  Serial.println("btn_1_timer");
+  btn_1_timer = millis();
+}
+// void end_time_btn_1(){
+//   // Serial.println(millis());
+  
+// }
+
+void start_time_btn_2(){
+  Serial.println("btn_2_timer");
+  btn_2_timer = millis();
+}
+// void end_time_btn_2(){
+//   // Serial.println(millis());
+//   Serial.println(btn_1_timer);
+//   if (millis() - btn_2_timer >= 1000){
+//     eVal2 = 1;
+//   }
+//   else{
+//     eVal2 = 0;
+//   }
+// }
+
+
 
 void loop() {
   encoderPosCount = 0;
@@ -118,13 +152,45 @@ void loop() {
       }
    }
   
-  boolean anychange=false;
+    boolean anychange=false;
   
    aVal = digitalRead(pinA);
    aVal2 = digitalRead(pinA2);
    aVal3 = digitalRead(pinA3);
    bVal = digitalRead(btn);
    bVal2 = digitalRead(btn2); 
+
+  if (btn_1_timer > 0) {
+    if (bVal == 1 && bVal2 == 0) {
+      if (millis() - btn_1_timer >= 1000){
+        eVal1 = 1;
+        btn_1_timer = 0;
+      }
+      else{
+        eVal1 = 0;
+      }
+    }
+    else {
+      btn_1_timer = 0;
+    }
+  }
+  
+  if (btn_2_timer > 0) {
+    if (bVal2 == 1 && bVal == 0) {
+      if (millis() - btn_2_timer >= 1000){
+        eVal2 = 1;
+        btn_2_timer = 0;
+      }
+      else{
+        eVal2 = 0;
+      }
+    }
+    else {
+      btn_2_timer = 0;
+    }
+  }
+
+
    mode_val = digitalRead(mouse_mode_pin); 
    mVal = 0;
    if (bVal == 1 && bVal2 == 1){
@@ -163,6 +229,15 @@ void loop() {
    if(mVal!=mVal_last) { 
       anychange=true;
    }
+
+   if(eVal1 == 1) { 
+      anychange=true;
+      bVal = 0;
+   }
+   if(eVal2 == 1) { 
+      anychange=true;
+      bVal2 = 0;
+   }
    
    
    if (aVal != pinALast){ 
@@ -184,7 +259,9 @@ void loop() {
      anychange=true;
    }
    if(anychange) {
-    Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2)+","+String(mVal) );
+    Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2)+","+String(mVal)+","+String(eVal1)+","+String(eVal2));
+    eVal1 = 0;
+    eVal2 = 0;
     // if(mouse_mode==1){
       // Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2) );
     // }

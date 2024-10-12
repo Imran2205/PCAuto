@@ -162,7 +162,7 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
 //        sonyfication.play_ding(2);
 //        delay(30);
 //        sonyfication.play_dong(5);
-        init_keyhook();
+//        init_keyhook();
         System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
         tts = new TTS(this);
         System.out.println(">>>>"+tts);
@@ -190,7 +190,7 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
     }
 
     public void on_CTRL() {
-        if (g.isMouse() || g.isMouse_sim()) {
+        if (useAsMouse || g.isMouse_sim()) {
             Point mouse = MouseInfo.getPointerInfo().getLocation();
             int xp = (int) ((100.0f * mouse.x) / screen.width);
             int yp = (int) ((100.0f * mouse.y) / screen.height);
@@ -413,8 +413,8 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
                 } while (read_b_ASCII != 10);
                 System.out.println("found=" + line);
                 String[] info = line.trim().split(",");
-                int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0;
-                if (info.length == 8) {
+                int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0, c8 = 0, c9 = 0;
+                if (info.length == 10) {
                     first_boundary_hit = true;
                     c1 = Integer.parseInt(info[1]);
                     c2 = Integer.parseInt(info[2]);
@@ -423,6 +423,8 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
                     c5 = Integer.parseInt(info[5]);
                     c6 = Integer.parseInt(info[6]);
                     c7 = Integer.parseInt(info[7]);
+                    c8 = Integer.parseInt(info[8]);
+                    c9 = Integer.parseInt(info[9]);
 
                     if (c1 != 0) {
                         c1_b = !c1_b;
@@ -461,12 +463,12 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
                 curr_time = System.currentTimeMillis();
                 long t_diff = curr_time - prev_time;
 //                    System.out.println(t_diff);
-                if(t_diff > 50){
-                    on_device_event(line, c1, c2, c3, c4, c5, c6, c7);
-                }
+//                if(t_diff > 50){
+//                    on_device_event(line, c1, c2, c3, c4, c5, c6, c7, c8, c9);
+//                }
                 prev_time = curr_time;
 
-//                on_device_event(line, c1, c2, c3, c4, c5, c6);
+                on_device_event(line, c1, c2, c3, c4, c5, c6, c7, c8, c9);
             }
         }
 
@@ -629,7 +631,7 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
         }
     }
 
-    public void on_device_event(String data, int c1, int c2, int c3, int c4, int c5, int c6, int c7) {
+    public void on_device_event(String data, int c1, int c2, int c3, int c4, int c5, int c6, int c7, int c8, int c9) {
         System.out.println("on_device_event=" + data);
         g.add_txt(data);
 
@@ -651,6 +653,15 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
             }
 //            }
             return;
+        }
+
+        if (c8 == 1) {
+            System.out.println("Long press: Primary");
+            on_CTRL();
+        }
+
+        if (c9 == 1) {
+            System.out.println("Long press: Secondary");
         }
 
         if (useAsMouse) {
@@ -1263,8 +1274,8 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
         System.out.println("emu_found=" + line);
 
         String[] info = line.trim().split(",");
-        int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0;
-        if (info.length == 8) {
+        int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0, c8 = 0, c9 = 0;
+        if (info.length == 10) {
             c1 = Integer.parseInt(info[1]);
             c2 = Integer.parseInt(info[2]);
             c3 = Integer.parseInt(info[3]);
@@ -1272,6 +1283,8 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
             c5 = Integer.parseInt(info[5]);
             c6 = Integer.parseInt(info[6]);
             c7 = Integer.parseInt(info[7]);
+            c8 = Integer.parseInt(info[8]);
+            c9 = Integer.parseInt(info[9]);
 
             c1t += c1;
             c2t += c2;
@@ -1293,7 +1306,7 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
 //            line = recreate;
             System.out.println("found_recreated=" + line);
         }
-        on_device_event(line, c1, c2, c3, c4, c5, c6, c7);
+        on_device_event(line, c1, c2, c3, c4, c5, c6, c7, c8, c9);
     }
 
     boolean has_client = false;
