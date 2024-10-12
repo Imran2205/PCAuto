@@ -84,13 +84,13 @@ void loop() {
 //      char ch=Serial.read();
       String line = serial_readLine_b();
 //      Serial.println("ln="+ln);
-      if(mouse_mode==0){
-        if(line=="h") {
-          haptic();
-        }else if(line=="b") {
-          beep();
-        }
+      // if(mouse_mode==0){
+      if(line=="h") {
+        haptic();
+      }else if(line=="b") {
+        beep();
       }
+      // }
 
       char h=line[0];
       String cmd=line.substring(2, line.length());

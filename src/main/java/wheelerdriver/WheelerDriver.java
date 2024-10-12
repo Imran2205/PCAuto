@@ -76,6 +76,7 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
     boolean in_ribbon_nav = false;
     boolean on_hold = false;
     boolean is_selected = false;
+    boolean first_boundary_hit = true;
 
     //hw mouse.
 
@@ -414,6 +415,7 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
                 String[] info = line.trim().split(",");
                 int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0;
                 if (info.length == 8) {
+                    first_boundary_hit = true;
                     c1 = Integer.parseInt(info[1]);
                     c2 = Integer.parseInt(info[2]);
                     c3 = Integer.parseInt(info[3]);
@@ -637,10 +639,17 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
 
         if (c7 == 1) {
             System.out.println("Change mode");
-            if (ctrlPressed) {
-                System.out.println("Ctrl is currently pressed");
-                useAsMouse = !useAsMouse;
+//            ctrlPressed
+//            if (true) {
+            System.out.println("Ctrl is currently pressed");
+            useAsMouse = !useAsMouse;
+            if (useAsMouse) {
+                tts.speakText("2D nav mode");
             }
+            else{
+                tts.speakText("H nav mode");
+            }
+//            }
             return;
         }
 
@@ -655,9 +664,9 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
 
 //            System.out.println("c3=" + c3);
             if (c3 == 1) {
-                server.send("next\n");
+                server.send("next1\n");
             } else if (c3 == -1) {
-                server.send("prev\n");
+                server.send("prev1\n");
             }
             if (c2 == 1) {
                 server.send("next2\n");
@@ -665,9 +674,9 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
                 server.send("prev2\n");
             }
             if (c1 == 1) {
-                server.send("next1\n");
+                server.send("next\n");
             } else if (c1 == -1) {
-                server.send("prev1\n");
+                server.send("prev\n");
             } else if (c5 == 1) {
                 server.send("click\n");
             } else if (c6 == 1) {
@@ -1017,13 +1026,21 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
             }
             return;
         }
-
+        System.out.println(mouse.x + "," + mouse.y + "," + screen.width + "," + screen.height);
         if (mouse.x < 5 || mouse.y < 5) {
-            haptic();
-            beep();
+            System.out.println("haptic and buzzer"+first_boundary_hit);
+            if (first_boundary_hit) {
+                haptic();
+                beep();
+                first_boundary_hit = false;
+            }
         } else if (mouse.x + 5 > screen.width || mouse.y + 5 > screen.height) {
-            haptic();
-            beep();
+            System.out.println("haptic and buzzer"+first_boundary_hit);
+            if (first_boundary_hit) {
+                haptic();
+                beep();
+                first_boundary_hit = false;
+            }
         }
 
 //         System.out.println("mousespeak="+g.isMouseSpeak());

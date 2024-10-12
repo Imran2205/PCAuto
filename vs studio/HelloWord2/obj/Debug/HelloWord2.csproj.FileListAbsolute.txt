@@ -71,3 +71,4 @@ C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord
 C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\HelloWord2.csproj.Up2Date
 C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Wheeler 3D.dll
 C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Wheeler 3D.pdb
+C:\Users\Student\Desktop\Wheeler\PCAuto\vs studio\HelloWord2\obj\Debug\Interop.InteropExtensionLib.dll
