@@ -460,14 +460,6 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
                 }
                 //older version
 
-                curr_time = System.currentTimeMillis();
-                long t_diff = curr_time - prev_time;
-//                    System.out.println(t_diff);
-//                if(t_diff > 50){
-//                    on_device_event(line, c1, c2, c3, c4, c5, c6, c7, c8, c9);
-//                }
-                prev_time = curr_time;
-
                 on_device_event(line, c1, c2, c3, c4, c5, c6, c7, c8, c9);
             }
         }
@@ -1037,22 +1029,28 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
             }
             return;
         }
-        System.out.println(mouse.x + "," + mouse.y + "," + screen.width + "," + screen.height);
-        if (mouse.x < 5 || mouse.y < 5) {
-            System.out.println("haptic and buzzer"+first_boundary_hit);
-            if (first_boundary_hit) {
-                haptic();
-                beep();
-                first_boundary_hit = false;
-            }
-        } else if (mouse.x + 5 > screen.width || mouse.y + 5 > screen.height) {
-            System.out.println("haptic and buzzer"+first_boundary_hit);
-            if (first_boundary_hit) {
-                haptic();
-                beep();
-                first_boundary_hit = false;
+
+        curr_time = System.currentTimeMillis();
+        long t_diff = curr_time - prev_time;
+        if(t_diff > 100) {
+            System.out.println(mouse.x + "," + mouse.y + "," + screen.width + "," + screen.height);
+            if (mouse.x < 5 || mouse.y < 5) {
+                System.out.println("haptic and buzzer" + first_boundary_hit);
+                if (first_boundary_hit) {
+                    haptic();
+                    beep();
+                    first_boundary_hit = false;
+                }
+            } else if (mouse.x + 5 > screen.width || mouse.y + 5 > screen.height) {
+                System.out.println("haptic and buzzer" + first_boundary_hit);
+                if (first_boundary_hit) {
+                    haptic();
+                    beep();
+                    first_boundary_hit = false;
+                }
             }
         }
+        prev_time = curr_time;
 
 //         System.out.println("mousespeak="+g.isMouseSpeak());
         if (g.isMouseLocSpeak()) {
@@ -1318,6 +1316,10 @@ public class WheelerDriver implements WebsocketInterface, EmuInterface, SimpleNe
         if (line.startsWith("__NO_")) {
             do_warn();
         }
+
+//        if (line.startsWith("__not supported")) {
+//
+//        }
 
     }
 

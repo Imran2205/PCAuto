@@ -26,6 +26,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
+
 /*
  * Helps: https://docs.microsoft.com/en-us/dotnet/framework/ui-automation/get-supported-ui-automation-control-patterns
  * https://stackoverflow.com/questions/10105396/given-an-automation-element-how-do-i-simulate-a-single-left-click-on-it
@@ -743,6 +744,10 @@ namespace HelloWord2
                 send_line("clicking on=" + element.Current.Name);
                 execute_supported_pattern(element);
             }
+            else if (msg.Trim().Equals("back"))                                           //test
+            {
+                SendKeys.SendWait("{ESC}");
+            }
             else if (msg.Trim().Equals("br"))                                           //test
             {
 
@@ -776,7 +781,7 @@ namespace HelloWord2
                     send_line("Error=" + ex.Message);
                 }
             }
-            else if (msg.Trim().Equals("pg"))    
+            else if (msg.Trim().Equals("pg"))
             {
                 AutomationElement element = groupelements[element_i];
                 String name = getProgramati_name(element);
@@ -791,11 +796,11 @@ namespace HelloWord2
                     msg = msg.Substring(5);
                     String[] info = msg.Split(',');
                     int x = Int32.Parse(info[0]);
-                    int y= Int32.Parse(info[1]);
-                    synthesizer.Rate = -6+x/8;
-                    synthesizer.Speak(x+"%");
-                    synthesizer.Rate = -6+y/8;
-                    synthesizer.SpeakAsync(y + "%"); 
+                    int y = Int32.Parse(info[1]);
+                    synthesizer.Rate = -6 + x / 8;
+                    synthesizer.Speak(x + "%");
+                    synthesizer.Rate = -6 + y / 8;
+                    synthesizer.SpeakAsync(y + "%");
                 }
                 catch (Exception ex)
                 {
@@ -815,9 +820,9 @@ namespace HelloWord2
                         String[] info = msg.Split('#');
                         String txt = info[0];
                         int pitch = Int32.Parse(info[1]);
-                         speak_pitch(txt, pitch);
+                        speak_pitch(txt, pitch);
 
-                       // synthesizer.Rate = pitch;
+                        // synthesizer.Rate = pitch;
                         //synthesizer.Speak(txt);
 
                     }
@@ -827,7 +832,8 @@ namespace HelloWord2
                         synthesizer.SpeakAsync(msg);
                     }
 
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     send_line("Error=" + ex.Message);
                 }
@@ -1125,15 +1131,39 @@ namespace HelloWord2
                 InvokePattern invokePattern =element.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
                 invokePattern.Invoke();
             }
+            else if (names.ToLower().Contains("expandcollapsepatternidentifiers"))
+            {
+                ExpandOrCollapseElement(element);
+            }
             else
             {
                 //not supported.
                 send_line("__not supported=" + names + "__");
+                SendKeys.SendWait("{ENTER}");
             }
 
 
             //ExpandCollapsePatternIdentifiers.Pattern
 
+        }
+
+        public void ExpandOrCollapseElement(AutomationElement element)
+        {
+            ExpandCollapsePattern pattern = element.GetCurrentPattern(ExpandCollapsePattern.Pattern) as ExpandCollapsePattern;
+
+            if (pattern != null)
+            {
+                ExpandCollapseState currentState = pattern.Current.ExpandCollapseState;
+
+                if (currentState == ExpandCollapseState.Collapsed)
+                {
+                    pattern.Expand();
+                }
+                else if (currentState == ExpandCollapseState.Expanded)
+                {
+                    pattern.Collapse();
+                }
+            }
         }
 
         public void InvokeAutomationElement(AutomationElement automationElement)
