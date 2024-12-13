@@ -1139,7 +1139,7 @@ namespace HelloWord2
             {
                 //not supported.
                 send_line("__not supported=" + names + "__");
-                SendKeys.SendWait("{ENTER}");
+                //SendKeys.SendWait("{ENTER}");
             }
 
 
