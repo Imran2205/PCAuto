@@ -172,3 +172,4 @@ void write_register(uint8_t reg, uint8_t value) {
   }å
   delay(1);
 }
+
