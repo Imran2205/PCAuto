@@ -96,7 +96,7 @@ public class GUI extends javax.swing.JFrame {
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 2;
-        panel.add(new javax.swing.JLabel("Keyboard mode (when \"Use as Mouse\" is off). Cmd+M switches Mouse / Keyboard mode."), c);
+        panel.add(new javax.swing.JLabel("Keyboard mode (when \"Use as Mouse\" is off and the Word add-in is not connected). Cmd+M switches Mouse / Keyboard mode."), c);
         c.gridwidth = 1;
 
         String[] actions = WheelerKeys.ACTIONS.keySet().toArray(new String[0]);

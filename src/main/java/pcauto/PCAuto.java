@@ -445,6 +445,24 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             // Device sends +1 for an upward wheel turn. Mouse mapping:
             // wheel 1: + up / - down, wheel 2: + left / - right, wheel 3: + faster / - slower
             this.parse_device_for_mouse(-w1, -w2, -w3);
+        } else if (word_mode()) {
+            // Word add-in ("Wheeler 3D", vs studio/HelloWord2) connected on port 4455:
+            // wheel 3 = ribbon tabs, wheel 2 = groups, wheel 1 = elements (same messages as before)
+            if (w3 == 1) {
+                server.send("next\n");
+            } else if (w3 == -1) {
+                server.send("prev\n");
+            }
+            if (w2 == 1) {
+                server.send("next2\n");
+            } else if (w2 == -1) {
+                server.send("prev2\n");
+            }
+            if (w1 == 1) {
+                server.send("next1\n");
+            } else if (w1 == -1) {
+                server.send("prev1\n");
+            }
         } else {
             if (ws != null && ws.isConnected()) {
                 ws.send_msg(data);
@@ -454,6 +472,12 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             keyboard_wheel(w3, "kb_w3_pos", "kb_w3_neg");
         }
         handle_buttons(v[3], v[4], v[5], v[6], v[7]);
+    }
+
+    // Word mode: mouse mode is off and the Word add-in is connected to the local socket server.
+    // Otherwise (no add-in) the wheels and buttons work as keyboard mode.
+    private boolean word_mode() {
+        return !useAsMouse && is_vsto && has_client && server != null;
     }
 
     // ---- Keyboard mode: the device presses the keys over USB ----
@@ -510,6 +534,8 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
         if (b1 == 0 && prev_b1 == 1 && !b1_long && !b1_both) {
             if (useAsMouse) {
                 send_dev("l");
+            } else if (word_mode()) {
+                server.send("click\n");
             } else {
                 key_tap(g.role("kb_b1_short"));
             }
@@ -517,6 +543,8 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
         if (b2 == 0 && prev_b2 == 1 && !b2_long && !b2_both) {
             if (useAsMouse) {
                 send_dev("r");
+            } else if (word_mode()) {
+                server.send("back\n");
             } else {
                 key_tap(g.role("kb_b2_short"));
             }
@@ -605,7 +633,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     public void toggle_mode() {
         onUseAsMouse(!useAsMouse);
         g.set_mouse_mode(useAsMouse);
-        String name = useAsMouse ? "Mouse mode" : "Keyboard mode";
+        String name = useAsMouse ? "Mouse mode" : (word_mode() ? "Word mode" : "Keyboard mode");
         g.add_txt(name);
         if (tts != null) {
             tts.speakText(name);
@@ -1192,6 +1220,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     public void onSimpleDisconnect(int serverId) {
         System.out.println("disconnected");
         has_client = false;
+        g.add_txt("Word add-in disconnected: keyboard mode");
         g.add_txt("socket: disconnected");
     }
 
@@ -1199,6 +1228,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     public void newSimpleClient(int serverId, String ip) {
         System.out.println("newclient=" + ip);
         has_client = true;
+        g.add_txt("Word add-in connected: wheels control the Word ribbon (when Use as Mouse is off)");
         g.add_txt("socket: new connection: " + ip);
     }
 }
