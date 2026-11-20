@@ -24,20 +24,6 @@ Main class: `src/main/java/pcauto/PCAuto.java`. Needs Java 21 or newer.
 1. Open the `PCAuto` folder. It loads as a Maven project; `pom.xml` points to the jars in `jars/`.
 2. Right-click `src/main/java/pcauto/PCAuto.java` and choose Run 'PCAuto.main()'.
 
-### Run from the command line
-
-macOS / Linux:
-
-```
-mkdir -p out/classes
-javac -d out/classes -cp "jars/*" $(find src/main/java -name "*.java")
-java --enable-native-access=ALL-UNNAMED -cp "out/classes:jars/*" pcauto.PCAuto
-```
-
-On Windows, use `;` instead of `:` in the classpath: `-cp "out/classes;jars/*"`.
-
-On macOS, give the app that runs Java (Terminal or IntelliJ) Accessibility permission in System Settings > Privacy & Security > Accessibility. Without it the keyboard shortcut does not work.
-
 ### Use
 
 1. Plug in the device.
