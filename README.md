@@ -41,9 +41,8 @@ Latest firmware: `Wheeler_Firmware/wheeler_final_w_debounce/wheeler_final_w_debo
 Upload it with the Arduino IDE:
 
 1. Open `wheeler_final_w_debounce.ino`.
-2. Install the `Mouse` and `Keyboard` libraries (Library Manager) if they are missing.
-3. Board: Arduino Leonardo. Pick the device's port.
-4. Close PCAuto and the Serial Monitor (they hold the port), then click Upload.
+2. Board: Arduino Leonardo. Pick the device's port.
+3. Close PCAuto and the Serial Monitor (they hold the port), then click Upload.
 
 Wheel direction, long press time and haptic length are set with `#define`s at the top of the file (`ENC1_DIR`, `LONG_PRESS_MS`, `HAPTIC_MS`).
 
