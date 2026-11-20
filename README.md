@@ -2,6 +2,8 @@
 
 Code and 3D files for the Wheeler device: three wheels and two buttons on an Arduino Leonardo.
 
+Paper: [Wheeler: A three-wheeled input device for usable, efficient, and versatile non-visual interaction](https://dl.acm.org/doi/abs/10.1145/3654777.3676396)
+
 ## Folders
 
 | Folder | What it is |
