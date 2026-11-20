@@ -62,16 +62,6 @@ To launch:
 3. Turn `Use as Mouse` off.
 4. Open Word. The add-in connects to PCAuto on port 4455.
 
-Controls in Word:
-
-- Wheel 3: ribbon tabs
-- Wheel 2: groups in the tab
-- Wheel 1: buttons in the group
-- Button 1: press the selected button
-- Button 2: Esc
-
-The first button 1 press after Word starts opens the add-in's form.
-
 ## 3D files
 
 `3D/`
