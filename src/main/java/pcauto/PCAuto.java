@@ -31,6 +31,7 @@ import websocketj.WebSocketServerSingle;
 import websocketj.WebsocketInterface;
 import com.fazecast.jSerialComm.SerialPort;
 import java.util.Scanner;
+import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -92,6 +93,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
         toner = new Toner();
 
         g = new GUI(this);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> send_dev("a")));
         System.out.println(this.tts);
         System.out.println(g.leader.tts);
         g.setVisible(true);
@@ -295,6 +297,11 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
 //                        on_CTRL();
 //                    }
 
+                    if (kc == NativeKeyEvent.VC_M && (nativeEvent.getModifiers() & NativeKeyEvent.META_MASK) != 0) {
+                        toggle_mode();
+                        return;
+                    }
+
                     if (kc == 41 && g.isMouseOnTild()) {
                         on_CTRL();
                     } else if (kc == 29 && g.isMouseOnCTRL()) {
@@ -328,7 +335,6 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             hw_mouse_o = ms_o;
             hw_mouse_i = ms_i;
             System.out.println("Connected");
-            g.setTitle(g.getTitle() + "_Connected");
         } catch (Exception ex) {
             g.setTitle(g.getTitle() + "_Not Connected");
             System.out.println("Can't connect");
@@ -353,6 +359,7 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             ms_i = ms_d.getInputStream();
             ms_o = ms_d.getOutputStream();
             System.out.println("Connected");
+            send_dev("a");  //clear any keys left held from a previous session
 
 //            System.out.println("Waiting for ready.");
             checkReady();
@@ -388,126 +395,233 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
                     }
                 } while (read_b_ASCII != 10);
                 System.out.println("found=" + line);
-                String[] info = line.trim().split(",");
-                int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
-                if (info.length == 7) {
-                    c1 = Integer.parseInt(info[1]);
-                    c2 = Integer.parseInt(info[2]);
-                    c3 = Integer.parseInt(info[3]);
-                    c4 = Integer.parseInt(info[4]);
-                    c5 = Integer.parseInt(info[5]);
-                    c6 = Integer.parseInt(info[6]);
-
-                    if (c1 != 0) {
-                        c1_b = !c1_b;
-                    }
-                    if (c2 != 0) {
-                        c2_b = !c2_b;
-                    }
-                    if (c3 != 0) {
-                        c3_b = !c3_b;
-                    }
-                    System.out.println("c1c2c3_b" + c1_b + "," + c2_b + "," + c3_b);
-
-                    c1t += c1;
-                    c2t += c2;
-                    c3t += c3;
-
-                    if (Math.abs(c1t) == 24) { //speed reduce?
-                        wh += c1;
-                        c1t = 0;
-                    }
-                    if (Math.abs(c2t) == 12) {
-                        wh2 += c2;
-                        c2t = 0;
-                    }
-                    if (Math.abs(c3t) == 48) {
-                        wh3 += c3;
-                        c3t = 0;
-                    }
-                    String recreate = "enc," + wh + "," + wh2 + "," + wh3 + "," + c4 + "," + c5 + "," + c6;
-//                    line = recreate;
-                    System.out.println("found_recreated=" + line);
-
+                int[] v = parse_wheeler_line(line);
+                if (v == null) {
+                    g.add_txt(line.trim());  //not wheel/button data (e.g. "Ready")
+                    continue;
                 }
-                //older version
-                on_device_event(line, c1, c2, c3, c4, c5, c6);
+                on_device_event(line.trim(), v);
             }
         }
 
     }
 
-    public void on_device_event(String data, int c1, int c2, int c3, int c4, int c5, int c6) {
+    /*
+    Device line formats:
+      enc,w1,w2,w3,b1,b2,both,long1,long2   (current firmware)
+      enc,w1,w2,w3,x,click,back             (older firmware / emulator)
+    w1..w3: +1 upward turn, -1 downward turn, 0 none
+    b1, b2: 1 while the button is held; both: 1 from both pressed until both are released
+    long1, long2: 1 in the line where a 1 s long press is recognised
+    Returns {w1, w2, w3, b1, b2, both, long1, long2}, or null for non-data lines.
+     */
+    static int[] parse_wheeler_line(String line) {
+        String[] info = line.trim().split(",");
+        if (!info[0].equals("enc")) {
+            return null;
+        }
+        try {
+            if (info.length == 9) {
+                int[] v = new int[8];
+                for (int i = 0; i < 8; i++) {
+                    v[i] = Integer.parseInt(info[i + 1].trim());
+                }
+                return v;
+            } else if (info.length == 7) {
+                return new int[]{Integer.parseInt(info[1].trim()), Integer.parseInt(info[2].trim()), Integer.parseInt(info[3].trim()),
+                    Integer.parseInt(info[5].trim()), Integer.parseInt(info[6].trim()), 0, 0, 0};
+            }
+        } catch (NumberFormatException ex) {
+        }
+        return null;
+    }
+
+    public void on_device_event(String data, int[] v) {
         System.out.println("on_device_event=" + data);
         g.add_txt(data);
 
+        int w1 = v[0], w2 = v[1], w3 = v[2];
         if (useAsMouse) {
-            this.parse_device_for_mouse(c2, c1, c3, c4, c5, c6);
+            // Device sends +1 for an upward wheel turn. Mouse mapping:
+            // wheel 1: + up / - down, wheel 2: + left / - right, wheel 3: + faster / - slower
+            this.parse_device_for_mouse(-w1, -w2, -w3);
+        } else {
+            if (ws != null && ws.isConnected()) {
+                ws.send_msg(data);
+            }
+            keyboard_wheel(w1, "kb_w1_pos", "kb_w1_neg");
+            keyboard_wheel(w2, "kb_w2_pos", "kb_w2_neg");
+            keyboard_wheel(w3, "kb_w3_pos", "kb_w3_neg");
+        }
+        handle_buttons(v[3], v[4], v[5], v[6], v[7]);
+    }
+
+    // ---- Keyboard mode: the device presses the keys over USB ----
+
+    private void keyboard_wheel(int step, String pos_slot, String neg_slot) {
+        if (step > 0) {
+            key_tap(g.role(pos_slot));
+        } else if (step < 0) {
+            key_tap(g.role(neg_slot));
+        }
+    }
+
+    // Button events from the raw button / both / long-press values.
+    // short press = released without a long press and without being part of a both-button press
+    private int prev_b1 = 0, prev_b2 = 0;
+    private boolean b1_long = false, b2_long = false, b1_both = false, b2_both = false;
+    private boolean both_active = false;
+    private String both_action = null;
+    private String lock1_action = null, lock2_action = null;  //actions held on by a long press
+
+    private void handle_buttons(int b1, int b2, int both, int long1, int long2) {
+        if (b1 == 1 && prev_b1 == 0) {
+            b1_long = false;
+            b1_both = both_active;  //re-pressed during a both-button press: still part of it
+        }
+        if (b2 == 1 && prev_b2 == 0) {
+            b2_long = false;
+            b2_both = both_active;
+        }
+
+        if (both == 1 && !both_active) {
+            both_active = true;
+            b1_both = true;
+            b2_both = true;
+            both_action = g.role("kb_both");
+            g.add_txt("both buttons: hold " + both_action);
+            key_hold(both_action);
+        } else if (both == 0 && both_active) {
+            both_active = false;
+            g.add_txt("both buttons: release " + both_action);
+            key_release(both_action);
+            both_action = null;
+        }
+
+        if (long1 == 1 && !b1_both) {
+            b1_long = true;
+            lock1_action = toggle_lock(lock1_action, g.role("kb_b1_long"), "button 1");
+        }
+        if (long2 == 1 && !b2_both) {
+            b2_long = true;
+            lock2_action = toggle_lock(lock2_action, g.role("kb_b2_long"), "button 2");
+        }
+
+        if (b1 == 0 && prev_b1 == 1 && !b1_long && !b1_both) {
+            if (useAsMouse) {
+                send_dev("l");
+            } else {
+                key_tap(g.role("kb_b1_short"));
+            }
+        }
+        if (b2 == 0 && prev_b2 == 1 && !b2_long && !b2_both) {
+            if (useAsMouse) {
+                send_dev("r");
+            } else {
+                key_tap(g.role("kb_b2_short"));
+            }
+        }
+        prev_b1 = b1;
+        prev_b2 = b2;
+    }
+
+    // Long press: first one holds the action down, the next one releases it.
+    // The device buzzes when a long press is recognised; a beep is added when the hold turns on.
+    private String toggle_lock(String current, String action, String name) {
+        if (current != null) {
+            g.add_txt(name + " long press: release " + current);
+            key_release(current);
+            return null;
+        }
+        if (WheelerKeys.NONE.equals(action)) {
+            return null;
+        }
+        g.add_txt(name + " long press: hold " + action);
+        key_hold(action);
+        send_dev("b");
+        return action;
+    }
+
+    // Number of active holds per key code, so overlapping holds (e.g. Shift lock + Shift+Tab)
+    // only release a key when nothing else is holding it.
+    private final HashMap<Integer, Integer> held = new HashMap<>();
+
+    private synchronized void key_hold(String action) {
+        for (int code : WheelerKeys.codes(action)) {
+            int n = held.getOrDefault(code, 0);
+            if (n == 0) {
+                send_dev("h," + code);
+            }
+            held.put(code, n + 1);
+        }
+    }
+
+    private synchronized void key_release(String action) {
+        int[] codes = WheelerKeys.codes(action);
+        for (int i = codes.length - 1; i >= 0; i--) {
+            int n = held.getOrDefault(codes[i], 0);
+            if (n <= 1) {
+                held.remove(codes[i]);
+                if (n == 1) {
+                    send_dev("r," + codes[i]);
+                }
+            } else {
+                held.put(codes[i], n - 1);
+            }
+        }
+    }
+
+    private synchronized void key_tap(String action) {
+        int[] codes = WheelerKeys.codes(action);
+        if (codes.length == 0) {
             return;
         }
-
-        if (is_vsto) {
-            System.out.println(">>>>> is_vsto");
-            //office works.
-
-//            System.out.println("c3=" + c3);
-            if (c3 == 1) {
-                server.send("next\n");
-            } else if (c3 == -1) {
-                server.send("prev\n");
+        for (int code : codes) {
+            if (!held.containsKey(code)) {
+                send_dev("h," + code);
             }
-            if (c2 == 1) {
-                server.send("next2\n");
-            } else if (c2 == -1) {
-                server.send("prev2\n");
+        }
+        for (int i = codes.length - 1; i >= 0; i--) {
+            if (!held.containsKey(codes[i])) {
+                send_dev("r," + codes[i]);
             }
-            if (c1 == 1) {
-                server.send("next1\n");
-            } else if (c1 == -1) {
-                server.send("prev1\n");
-            } else if (c5 == 1) {
-                server.send("click\n");
-            } else if (c6 == 1) {
-                server.send("back\n");
-            }
+        }
+    }
 
+    // Releases every key the device is holding (also clears long-press holds)
+    public synchronized void release_all_keys() {
+        held.clear();
+        lock1_action = null;
+        lock2_action = null;
+        both_active = false;
+        both_action = null;
+        send_dev("a");
+        if (g != null) {
+            g.add_txt("all keys released");
+        }
+    }
+
+    // Cmd+M: switch between mouse mode and keyboard mode
+    public void toggle_mode() {
+        onUseAsMouse(!useAsMouse);
+        g.set_mouse_mode(useAsMouse);
+        String name = useAsMouse ? "Mouse mode" : "Keyboard mode";
+        g.add_txt(name);
+        if (tts != null) {
+            tts.speakText(name);
+        }
+    }
+
+    private synchronized void send_dev(String cmd) {
+        if (ms_o == null) {
             return;
         }
-
-        if (ws != null && ws.isConnected()) {
-            System.out.println(">>>>> ws_connected");
-            ws.send_msg(data);
+        try {
+            ms_o.write((cmd + "\n").getBytes("US-ASCII"));
+            ms_o.flush();
+        } catch (IOException e) {
+            System.out.println("send failed: " + e.getMessage());
         }
-
-        if (c6 == 1) {
-            System.out.println(">>>>> c6==1");
-            System.out.println("Simulating escape key");
-            robot.keyPress(KeyEvent.VK_ESCAPE);
-        }
-
-        if (c5 == 0) {
-            System.out.println(">>>>> c5==0");
-            shift_hold = false;  //release shift hold
-            robot.keyRelease(KeyEvent.VK_SHIFT);
-        }
-
-        if (wheel_23_arrow_key_bound || native_bind) {
-            System.out.println(">>>>> wheel_23_arrow_key_bound || native_bind");
-            if (c1 < 0) {
-                simulate_key(KeyEvent.VK_LEFT);
-
-            } else if (c1 > 0) {
-                simulate_key(KeyEvent.VK_RIGHT);
-            }
-
-            if (c2 < 0) {
-                simulate_key(KeyEvent.VK_UP);
-            } else if (c2 > 0) {
-                simulate_key(KeyEvent.VK_DOWN);
-            }
-
-        }
-
     }
 
     void simulate_key(int key_code) {
@@ -699,7 +813,9 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     /*
     Hardware mouse.
      */
-    private void parse_device_for_mouse(int c1, int c2, int c3, int c4, int c5, int c6) {
+    // c1 -> vertical ("y", + is down), c2 -> horizontal ("x", + is right), c3 -> mouse speed
+    // (button clicks are handled in handle_buttons)
+    private void parse_device_for_mouse(int c1, int c2, int c3) {
         Point mouse = MouseInfo.getPointerInfo().getLocation();
 
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -771,6 +887,10 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             }
         }
 
+        int dx = c2 > 0 ? 1 : (c2 < 0 ? -1 : 0);
+        int dy = c1 > 0 ? 1 : (c1 < 0 ? -1 : 0);
+        check_edge_alert(mouse, screen, dx, dy);
+
         if (c3 == 1) {
             mouse_speed--;
             g.update_speed(mouse_speed);
@@ -779,48 +899,6 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             mouse_speed++;
             g.update_speed(mouse_speed);
             return;
-        } else if (c5 == 1) {
-            //leftClickDown(true);
-            // delay(30);
-            // leftClickDown(false);
-//            hw_mouse.send_new("l\n");
-            String send_str = "l\n";
-            byte[] send_bytes = new byte[0];
-            try {
-                send_bytes = send_str.getBytes("US-ASCII");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                hw_mouse_o.write(send_bytes);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return;
-
-        } else if (c6 == 1) {
-//            hw_mouse.send_new("r\n");
-            String send_str = "r\n";
-            byte[] send_bytes = new byte[0];
-            try {
-                send_bytes = send_str.getBytes("US-ASCII");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                hw_mouse_o.write(send_bytes);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return;
-        }
-
-        if (mouse.x < 5 || mouse.y < 5) {
-            haptic();
-            beep();
-        } else if (mouse.x + 5 > screen.width || mouse.y + 5 > screen.height) {
-            haptic();
-            beep();
         }
 
 //         System.out.println("mousespeak="+g.isMouseSpeak());
@@ -844,6 +922,47 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
             }
         }
 
+    }
+
+    // Screen-edge alert: beep + haptic once per push toward an edge, instead of on every wheel step.
+    // A new alert is only sent after the user moves away from the edge or pauses, so the device
+    // is not flooded with blocking beep/haptic commands while the cursor sits at the edge.
+    private static final int EDGE_PX = 5;
+    private static final long EDGE_ALERT_MIN_INTERVAL_MS = 400;
+    private static final long EDGE_PUSH_RESET_MS = 600;
+    private boolean edge_alerted = false;
+    private long last_edge_alert_ms = 0;
+    private long last_edge_move_ms = 0;
+
+    private void check_edge_alert(Point mouse, Dimension screen, int dx, int dy) {
+        if (dx == 0 && dy == 0) {
+            return;
+        }
+        // Position after this step (the device moves the cursor after we send x/y)
+        int nx = mouse.x + dx * mouse_speed;
+        int ny = mouse.y + dy * mouse_speed;
+        boolean left = nx < EDGE_PX;
+        boolean right = nx + EDGE_PX > screen.width;
+        boolean top = ny < EDGE_PX;
+        boolean bottom = ny + EDGE_PX > screen.height;
+        boolean toward_edge = (left && dx < 0) || (right && dx > 0) || (top && dy < 0) || (bottom && dy > 0);
+
+        long now = System.currentTimeMillis();
+        if (now - last_edge_move_ms > EDGE_PUSH_RESET_MS) {
+            edge_alerted = false;  //paused: next push toward the edge counts as a new one
+        }
+        last_edge_move_ms = now;
+
+        if (!toward_edge) {
+            edge_alerted = false;  //moving away from (or not near) the edge: no alert
+            return;
+        }
+        if (!edge_alerted && now - last_edge_alert_ms > EDGE_ALERT_MIN_INTERVAL_MS) {
+            edge_alerted = true;
+            last_edge_alert_ms = now;
+            haptic();
+            beep();
+        }
     }
 
     private void parse_device_for_mouse_robot333(int c1, int c2, int c3, int c4, int c5, int c6) {
@@ -1040,38 +1159,10 @@ public class PCAuto implements WebsocketInterface, EmuInterface, SimpleNetServer
     @Override
     public void on_emu_data(String line) {
         System.out.println("emu_found=" + line);
-
-        String[] info = line.trim().split(",");
-        int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
-        if (info.length == 7) {
-            c1 = Integer.parseInt(info[1]);
-            c2 = Integer.parseInt(info[2]);
-            c3 = Integer.parseInt(info[3]);
-            c4 = Integer.parseInt(info[4]);
-            c5 = Integer.parseInt(info[5]);
-            c6 = Integer.parseInt(info[6]);
-
-            c1t += c1;
-            c2t += c2;
-            c3t += c3;
-
-            if (Math.abs(c1t) == 2) {
-                wh += c1;
-                c1t = 0;
-            }
-            if (Math.abs(c2t) == 2) {
-                wh2 += c2;
-                c2t = 0;
-            }
-            if (Math.abs(c3t) == 2) {
-                wh3 += c3;
-                c3t = 0;
-            }
-            String recreate = "enc," + wh + "," + wh2 + "," + wh3 + "," + c4 + "," + c5 + "," + c6;
-//            line = recreate;
-            System.out.println("found_recreated=" + line);
+        int[] v = parse_wheeler_line(line);
+        if (v != null) {
+            on_device_event(line.trim(), v);
         }
-        on_device_event(line, c1, c2, c3, c4, c5, c6);
     }
 
     boolean has_client = false;

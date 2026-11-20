@@ -39,6 +39,114 @@ public class GUI extends javax.swing.JFrame {
 
 //        reset_config();
         load_config();
+        build_keyboard_tab();
+        make_resizable_and_scrollable();
+    }
+
+    // The generated layout fixes the window content at its preferred size and the tab pages have
+    // no scroll bars, so controls at the bottom of a tab can be cut off. Re-arrange it so the
+    // window can be resized, every tab scrolls, and the log can be resized with a divider.
+    private void make_resizable_and_scrollable() {
+        int n = jTabbedPane1.getTabCount();
+        String[] titles = new String[n];
+        java.awt.Component[] pages = new java.awt.Component[n];
+        for (int i = 0; i < n; i++) {
+            titles[i] = jTabbedPane1.getTitleAt(i);
+            pages[i] = jTabbedPane1.getComponentAt(i);
+        }
+        jTabbedPane1.removeAll();
+        for (int i = 0; i < n; i++) {
+            javax.swing.JScrollPane scroll = new javax.swing.JScrollPane(pages[i]);
+            scroll.setBorder(null);
+            scroll.getVerticalScrollBar().setUnitIncrement(16);
+            scroll.getHorizontalScrollBar().setUnitIncrement(16);
+            jTabbedPane1.addTab(titles[i], scroll);
+        }
+
+        javax.swing.JSplitPane split = new javax.swing.JSplitPane(javax.swing.JSplitPane.VERTICAL_SPLIT, jTabbedPane1, jScrollPane1);
+        split.setResizeWeight(0.75);
+        split.setContinuousLayout(true);
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(100, 60));
+        jTabbedPane1.setMinimumSize(new java.awt.Dimension(100, 120));
+
+        jPanel1.removeAll();
+        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanel1.add(split, java.awt.BorderLayout.CENTER);
+
+        getContentPane().removeAll();
+        getContentPane().setLayout(new java.awt.BorderLayout());
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        setResizable(true);
+        setMinimumSize(new java.awt.Dimension(500, 400));
+        java.awt.Rectangle screen = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        setSize(Math.min(1000, screen.width), Math.min(800, screen.height));
+        split.setDividerLocation(Math.min(800, screen.height) - 230);
+    }
+
+    // ---- Keyboard mode: role assignment for wheels and buttons ----
+    private final HashMap<String, javax.swing.JComboBox<String>> role_boxes = new HashMap<>();
+
+    private void build_keyboard_tab() {
+        javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        java.awt.GridBagConstraints c = new java.awt.GridBagConstraints();
+        c.insets = new java.awt.Insets(4, 8, 4, 8);
+        c.anchor = java.awt.GridBagConstraints.WEST;
+
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        panel.add(new javax.swing.JLabel("Keyboard mode (when \"Use as Mouse\" is off). Cmd+M switches Mouse / Keyboard mode."), c);
+        c.gridwidth = 1;
+
+        String[] actions = WheelerKeys.ACTIONS.keySet().toArray(new String[0]);
+        int row = 1;
+        for (WheelerKeys.Slot slot : WheelerKeys.SLOTS) {
+            c.gridy = row++;
+            c.gridx = 0;
+            javax.swing.JLabel label = new javax.swing.JLabel(slot.label);
+            panel.add(label, c);
+
+            javax.swing.JComboBox<String> box = new javax.swing.JComboBox<>(actions);
+            box.setSelectedItem(leader.prefs.get(slot.key, slot.def));
+            box.getAccessibleContext().setAccessibleName(slot.label);
+            label.setLabelFor(box);
+            box.addActionListener(e -> leader.prefs.put(slot.key, (String) box.getSelectedItem()));
+            role_boxes.put(slot.key, box);
+            c.gridx = 1;
+            panel.add(box, c);
+        }
+
+        c.gridy = row++;
+        c.gridx = 0;
+        javax.swing.JButton reset = new javax.swing.JButton("Reset to defaults");
+        reset.addActionListener(e -> {
+            for (WheelerKeys.Slot slot : WheelerKeys.SLOTS) {
+                role_boxes.get(slot.key).setSelectedItem(slot.def);
+            }
+        });
+        panel.add(reset, c);
+
+        c.gridx = 1;
+        javax.swing.JButton release = new javax.swing.JButton("Release all keys");
+        release.addActionListener(e -> leader.release_all_keys());
+        panel.add(release, c);
+
+        jTabbedPane1.addTab("Keyboard", panel);
+    }
+
+    // Action assigned to a keyboard-mode slot (see WheelerKeys.SLOTS)
+    public String role(String slot_key) {
+        javax.swing.JComboBox<String> box = role_boxes.get(slot_key);
+        if (box == null || box.getSelectedItem() == null) {
+            return WheelerKeys.NONE;
+        }
+        return (String) box.getSelectedItem();
+    }
+
+    // Keep the "Use as Mouse" checkbox in sync when the mode is switched with Cmd+M
+    public void set_mouse_mode(boolean mouse) {
+        javax.swing.SwingUtilities.invokeLater(() -> jCheckBox1.setSelected(mouse));
     }
 
     public void load_config() {
@@ -1036,8 +1144,9 @@ public class GUI extends javax.swing.JFrame {
 //        String[] ports = SerialNR.getPorts();
 //        this.setPortList(ports);
         try {
-            main_port = jComboBox1.getSelectedItem().toString().trim();
+            main_port = port_name(jComboBox1.getSelectedItem().toString());
             leader.connect_arduino(main_port);
+            connect_mouse_hw_auto();
         } catch (Exception ex) {
             this.add_txt("No PORT Found");
             JOptionPane.showMessageDialog(rootPane, "No Device Found", "Failed", JOptionPane.ERROR_MESSAGE);
@@ -1127,7 +1236,7 @@ public class GUI extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //connect mouse hw
         try {
-            String mouse_port = jComboBox2.getSelectedItem().toString().trim();
+            String mouse_port = port_name(jComboBox2.getSelectedItem().toString());
             leader.connect_arduino_mouse(mouse_port);
             jButton2.setEnabled(false);
             jCheckBox1.setEnabled(true);
@@ -1147,7 +1256,7 @@ public class GUI extends javax.swing.JFrame {
             if (port.getSystemPortName().equals(main_port)) {
                 continue;
             }
-            jComboBox2.addItem(port.getSystemPortName());
+            jComboBox2.addItem(port_label(port));
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -1203,8 +1312,9 @@ public class GUI extends javax.swing.JFrame {
     private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
-                main_port = jComboBox1.getSelectedItem().toString().trim();
+                main_port = port_name(jComboBox1.getSelectedItem().toString());
                 leader.connect_arduino(main_port);
+                connect_mouse_hw_auto();
             } catch (Exception ex) {
                 this.add_txt("No PORT Found");
                 JOptionPane.showMessageDialog(rootPane, "No Device Found", "Failed", JOptionPane.ERROR_MESSAGE);
@@ -1229,7 +1339,7 @@ public class GUI extends javax.swing.JFrame {
                 if (port.getSystemPortName().equals(main_port)) {
                     continue;
                 }
-                jComboBox2.addItem(port.getSystemPortName());
+                jComboBox2.addItem(port_label(port));
             }
         }
     }//GEN-LAST:event_jButton3KeyPressed
@@ -1238,7 +1348,7 @@ public class GUI extends javax.swing.JFrame {
         //connect mouse hw
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
-                String mouse_port = jComboBox2.getSelectedItem().toString().trim();
+                String mouse_port = port_name(jComboBox2.getSelectedItem().toString());
                 leader.connect_arduino_mouse(mouse_port);
                 jButton2.setEnabled(false);
                 jCheckBox1.setEnabled(true);
@@ -1465,10 +1575,54 @@ public class GUI extends javax.swing.JFrame {
 //        }
 //    }
 
+    // The mouse hardware is the same Wheeler device as the main port, so connect it automatically
+    // and lock the "Search Mouse Hw" / "connect mouse hw" controls instead of connecting twice.
+    private void connect_mouse_hw_auto() {
+        leader.connect_arduino_mouse(main_port);
+        jComboBox2.removeAllItems();
+        jComboBox2.addItem(jComboBox1.getSelectedItem().toString());
+        jComboBox2.setEnabled(false);
+        jButton3.setEnabled(false);
+        jButton2.setEnabled(false);
+        jCheckBox1.setEnabled(true);
+        jCheckBox2.setEnabled(true);
+        jCheckBox5.setEnabled(true);
+    }
+
     public void setPortList(SerialPort[] ports) {
         for (SerialPort port : ports) {
-            jComboBox1.addItem(port.getSystemPortName());
+            jComboBox1.addItem(port_label(port));
+            if (is_wheeler(port)) {
+                jComboBox1.setSelectedItem(port_label(port));
+            }
         }
+    }
+
+    // The Wheeler device is an Arduino Leonardo (USB VID 0x2341, PID 0x8036) whose port is cu.usbmodemHIDFG*.
+    // macOS also lists a tty.* twin of the same device; only the cu.* one is labelled.
+    private static boolean is_wheeler(SerialPort port) {
+        String name = port.getSystemPortName();
+        if (name.startsWith("tty.")) {
+            return false;
+        }
+        return name.contains("HIDFG")
+                || (port.getVendorID() == 0x2341 && port.getProductID() == 0x8036);
+    }
+
+    // Name shown in the port dropdowns, e.g. "Wheeler (cu.usbmodemHIDFG1)"
+    private static String port_label(SerialPort port) {
+        String name = port.getSystemPortName();
+        return is_wheeler(port) ? "Wheeler (" + name + ")" : name;
+    }
+
+    // Real port name from a dropdown label
+    private static String port_name(String label) {
+        label = label.trim();
+        int open = label.lastIndexOf('(');
+        if (label.endsWith(")") && open >= 0) {
+            return label.substring(open + 1, label.length() - 1);
+        }
+        return label;
     }
 
     /**

@@ -259,7 +259,7 @@ void loop() {
      anychange=true;
    }
    if(anychange) {
-    Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal) +","+String(bVal2)+","+String(mVal)+","+String(eVal1)+","+String(eVal2));
+    Serial.println("enc,"+String(encoderPosCount)+","+String(encoderPosCount2)+","+String(encoderPosCount3)+","+String(bVal)+","+String(bVal2)+","+String(mVal)+","+String(eVal1)+","+String(eVal2));
     eVal1 = 0;
     eVal2 = 0;
     // if(mouse_mode==1){
