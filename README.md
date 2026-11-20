@@ -22,7 +22,7 @@ Main class: `src/main/java/pcauto/PCAuto.java`. Needs Java 21 or newer.
 ### Run from IntelliJ
 
 1. Open the `PCAuto` folder. It loads as a Maven project; `pom.xml` points to the jars in `jars/`.
-2. Open `src/main/java/pcauto/PCAuto.java` and run `main`.
+2. Right-click `src/main/java/pcauto/PCAuto.java` and choose Run 'PCAuto.main()'.
 
 ### Run from the command line
 
