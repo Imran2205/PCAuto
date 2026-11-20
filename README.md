@@ -34,11 +34,6 @@ Main class: `src/main/java/pcauto/PCAuto.java`. Needs Java 21 or newer.
    - Word mode: `Use as Mouse` off and the Word add-in running. Wheels move through the Word ribbon (see below).
 4. Cmd+M switches between mouse and keyboard mode.
 
-Button gestures (both modes, set in the Keyboard tab):
-
-- Hold a button for 1 second: turns its hold key on, hold again to turn it off. Default: button 1 = Ctrl+Option (VoiceOver), button 2 = Shift.
-- Press both buttons: holds Shift+Tab until released.
-
 ## Firmware
 
 Latest firmware: `Wheeler_Firmware/wheeler_final_w_debounce/wheeler_final_w_debounce.ino`
